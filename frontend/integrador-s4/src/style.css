@@ -1,17 +1,22 @@
+:root {
+    --login-color: rgb(37, 73, 107);
+}
+
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
 }
 
-.login-section {
+.login-section, .register-section {
     width: 100%;
     height: 100vh;
     display: flex;
 }
 
 /* Login left container */
-.login-left-container { 
+.login-left-container, .register-left-container { 
     width: 50%;
     height: 100%;
     display: flex;
@@ -19,16 +24,104 @@
     align-items: center;
 }
 
-.login-left-container img {
+.login-left-container img, .register-left-container img {
     width: 400px;
     height: 300px;
 }
 
 /* Login right container */
-.login-right-container { 
+.login-right-container, .register-right-container { 
     width: 50%; 
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.login-container, .register-container {
+    width: 90%;
+    height: 90%;
+    background-color: var(--login-color);
+    display: flex;
+    justify-content: center;
+}
+
+.login-container form, .register-container form {
+    color: white;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form h2 {
+    padding: 98px 0 40px 0;
+    font-size: 2rem;
+}
+
+/* Inputs */
+.input-label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 60%;
+    padding: 20px 0;
+}
+
+.input-label label {
+    font-size: 1.5rem;
+}
+
+.input-label input {
+    height: 40px;
+    padding: 0px 15px;
+    font-size: 1.2rem;
+    outline: none;
+    border: 0;
+    border-bottom: 1px solid white;
+    background-color: transparent;
+    color: white;
+}
+
+.submit-button {
+    padding: 25px 0 22px 0;
+}
+
+.submit-button input {
+    appearance: none;
+    width: 180px;
+    height: 60px;
+    border: 0;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.submit-button input:hover {
+    background-color: rgb(220, 220, 220);
+    transition: .4s;
+}
+
+.link {
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* Register */
+.register-container form h2 {
+    padding: 48px 0 20px 0;
+}
+
+/* Error msg */
+.error-msg-login {
+    color: red;
+    font-size: 1.2rem;
 }
