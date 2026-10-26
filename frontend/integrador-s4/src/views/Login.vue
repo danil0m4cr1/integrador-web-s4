@@ -18,10 +18,12 @@
                         <input type="password" v-model="pass">
                     </div>
                     <p v-if="loginErr" class="error-msg-login">
-                        Email ou senha inválidos, tente novamente!
+                        {{ mensagemErro }}
                     </p>
                     <div class="submit-button">
-                        <input type="submit" value="Logar">
+                        <input type="submit" 
+                        :value="carregando ? 'Entrando...' : 'Logar'"
+                        :disabled="carregando">
                     </div>
                     <router-link class="link" to="/register">Não tem conta? Cadastre-se</router-link>
                 </form>
@@ -32,25 +34,60 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
-import {useRouter} from 'vue-router';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '../services/api';
 
 const router = useRouter();
 
 const email = ref('');
 const pass = ref('');
 const loginErr = ref(false);
+const mensagemErro = ref('');
+const carregando = ref(false);
 
-function login(){   
-    console.log(email.value);
-    console.log(pass.value);
+async function login() {
+  loginErr.value = false;
+  mensagemErro.value = '';
 
-    if(email.value == "admin@teste.com" && pass.value == "admin"){
-        loginErr.value = false;
-        router.push("/home");
+  if (!email.value.trim() || !pass.value) {
+    loginErr.value = true;
+    mensagemErro.value = 'Informe seu e-mail e sua senha.';
+    return;
+  }
+
+  carregando.value = true;
+
+  try {
+    const response = await api.post('/usuarios/login/', {
+      email: email.value.trim().toLowerCase(),
+      password: pass.value,
+    });
+
+    console.log('Login realizado:', response.data);
+
+    // Redireciona após a confirmação do backend.
+    await router.push('/home');
+
+  } catch (error) {
+    loginErr.value = true;
+
+    if (error.response?.status === 401) {
+      mensagemErro.value = 'E-mail ou senha inválidos.';
+    } else if (error.response?.data?.detail) {
+      mensagemErro.value = error.response.data.detail;
     } else {
-        loginErr.value = true;
+      mensagemErro.value =
+        'Não foi possível conectar ao servidor.';
     }
-}
 
+    console.error(
+      'Erro no login:',
+      error.response?.data || error.message
+    );
+
+  } finally {
+    carregando.value = false;
+  }
+}
 </script>

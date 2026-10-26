@@ -56,7 +56,7 @@
 
 form h2 {
     padding: 98px 0 40px 0;
-    font-size: 2rem;
+    font-size: 32px;
 }
 
 /* Inputs */
@@ -69,13 +69,13 @@ form h2 {
 }
 
 .input-label label {
-    font-size: 1.5rem;
+    font-size: 24px;
 }
 
 .input-label input {
     height: 40px;
     padding: 0px 15px;
-    font-size: 1.2rem;
+    font-size: 18px;
     outline: none;
     border: 0;
     border-bottom: 1px solid white;
@@ -123,5 +123,11 @@ form h2 {
 /* Error msg */
 .error-msg-login {
     color: red;
-    font-size: 1.2rem;
+    font-size: 18px;
+}
+
+/* Sucess msg */
+.sucess-msg {
+    color: green;
+    font-size: 18px;
 }

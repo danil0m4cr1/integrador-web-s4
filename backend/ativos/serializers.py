@@ -13,13 +13,8 @@ from django.contrib.auth.models import User
 
 # Cadastro de Usuario Serializer
 class CadastroUsuarioSerializers(serializers.Serializer):
-    password = serializers.CharField(write_only = True)
-    nome = serializers.CharField()
     email = serializers.EmailField()
-    telefone = serializers.CharField(
-        required = False,
-        allow_blank = True
-    )
+    password = serializers.CharField(write_only = True)
 
     def validated_username(self, value):
         if User.objects.filter(username = value).exists():
@@ -38,9 +33,12 @@ class CadastroUsuarioSerializers(serializers.Serializer):
 
     def create(self, validated_data):
         # Criando o usuario de autenticacao do django
-        usuario = Usuario.objects.create_user(
-            username = validated_data['username'],
-            email = validated_data['email'],
+
+        email = validated_data["email"].strip().lower()
+
+        usuario = User.objects.create_user(
+            username = email,
+            email = email,
             password = validated_data['password']
         )
 
@@ -49,11 +47,13 @@ class CadastroUsuarioSerializers(serializers.Serializer):
     def to_representation(self, instance):
         return {
             "id": instance.id,
-            "username": instance.usuario.username,
-            "nome": instance.nome,
             "email": instance.email,
-            "telefone": instance.telefone
         }
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email"]
 
 # Categoria Serializer
 class CategoriaSerializer(serializers.ModelSerializer):
