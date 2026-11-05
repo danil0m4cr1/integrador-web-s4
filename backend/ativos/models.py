@@ -50,15 +50,6 @@ class Ativo(models.Model):
 
     def __str__(self):
         return f"{self.nome} - (patrimonio={self.patrimonio}) - (laboratorio={self.laboratorio})"
-
-class Usuario(models.Model):
-    usuario = models.OneToOneField(
-        User, on_delete = models.CASCADE, null = True, blank = True
-    )
-    email = models.EmailField(unique = True)
-
-    def __str__(self):
-        return self.nome
     
 class Movimentacao(models.Model):
     ativo = models.ForeignKey(
@@ -69,7 +60,7 @@ class Movimentacao(models.Model):
         related_name = "movimentacao"
     )
     usuario = models.ForeignKey(
-        Usuario,
+        User,
         on_delete = models.SET_NULL,
         null = True,
         blank = True,
@@ -98,7 +89,7 @@ class OrdemServico(models.Model):
         related_name = "ativo"
     )
     usuario = models.ForeignKey(
-        Usuario,
+        User,
         on_delete = models.SET_NULL,
         null = True,
         blank = True,

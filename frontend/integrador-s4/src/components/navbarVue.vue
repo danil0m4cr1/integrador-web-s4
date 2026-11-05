@@ -1,4 +1,3 @@
-```vue
 <template>
     <section>
         <nav class="navbar">
@@ -13,10 +12,18 @@
                 </a>
 
                 <ul class="navbar-menu">
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#">Histórico</a></li>
-                    <li><a href="#">RA</a></li>
+                    <li>
+                        <router-link to="/home">Home</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/dashboard">Dashboard</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/history">Histórico</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/ra">RA</router-link>
+                    </li>
                 </ul>
 
             </div>
@@ -25,6 +32,8 @@
 </template>
 
 <script>
+import router from '../router';
+
 export default {
     name: 'Navbar'
 }
@@ -80,12 +89,10 @@ export default {
 .navbar-menu li a {
     display: block;
     text-decoration: none;
-    color: #173f52;
     font-size: 18px;
     font-weight: 500;
     padding: 10px 18px;
     border-radius: 20px;
-    border: 2px solid transparent;
     transition: all 0.3s ease;
     white-space: nowrap;
 }
@@ -104,15 +111,14 @@ export default {
     }
 
     .navbar-menu {
-        flex-wrap: wrap;
+        flex-direction: column;
         justify-content: center;
-        gap: 5px;
+        gap: 10px;
     }
 
     .navbar-menu li a {
-        font-size: 15px;
+        font-size: 24px;
         padding: 8px 10px;
     }
 }
 </style>
-```

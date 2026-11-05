@@ -1,8 +1,7 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
 from .models import (
-    Usuario, 
+    User,
     Categoria, 
     Laboratorio, 
     Ativo, 

@@ -1,12 +1,16 @@
+@import 'tailwindcss';
+
 :root {
     --login-color: rgb(37, 73, 107);
 }
 
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
+@layer base {
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto', sans-serif;
+    }
 }
 
 .login-section, .register-section {
