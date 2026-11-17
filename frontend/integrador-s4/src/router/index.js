@@ -6,6 +6,7 @@ import Home from "../views/Home.vue";
 import Ra from "../views/Ra.vue";
 import Dashboard from "../views/Dashboard.vue";
 import HistoryActive from "../views/HistoryActive.vue";
+import OrdemServico from '../views/OrdemServico.vue';
 
 const routes = [
     {
@@ -13,7 +14,7 @@ const routes = [
         component: Login
     },
     {
-        path: "/register",
+        path: "/cadastro",
         component: Register
     },
     {
@@ -25,12 +26,16 @@ const routes = [
         component: Ra
     },
     {
-        path: "/history",
+        path: "/historico",
         component: HistoryActive
     },
     {
         path: "/dashboard",
         component: Dashboard
+    },
+    {
+        path: "/servicos",
+        component: OrdemServico
     }
 ]
 

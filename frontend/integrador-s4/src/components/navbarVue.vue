@@ -19,10 +19,13 @@
                         <router-link to="/dashboard">Dashboard</router-link>
                     </li>
                     <li>
-                        <router-link to="/history">Histórico</router-link>
+                        <router-link to="/historico">Histórico</router-link>
                     </li>
                     <li>
                         <router-link to="/ra">RA</router-link>
+                    </li>
+                    <li>
+                        <router-link to="/servicos">Serviços</router-link>
                     </li>
                 </ul>
 

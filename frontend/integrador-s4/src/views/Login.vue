@@ -25,7 +25,7 @@
                         :value="carregando ? 'Entrando...' : 'Logar'"
                         :disabled="carregando">
                     </div>
-                    <router-link class="link" to="/register">Não tem conta? Cadastre-se</router-link>
+                    <router-link class="link" to="/cadastro">Não tem conta? Cadastre-se</router-link>
                 </form>
             </div>
         </div>
@@ -64,10 +64,11 @@ async function login() {
       password: pass.value,
     });
 
-    console.log('Login realizado:', response.data);
-
     // Redireciona após a confirmação do backend.
+    localStorage.setItem("usuario_id", response.data.id);
+    localStorage.setItem("usuario_email", response.data.email);
     await router.push('/home');
+    
 
   } catch (error) {
     loginErr.value = true;

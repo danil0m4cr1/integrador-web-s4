@@ -101,8 +101,18 @@ class OrdemServico(models.Model):
         choices = STATUS_CHOICE,
         default = "PENDENTE"
     )
+    laboratorio_origem = models.CharField(
+        max_length=50
+    )
+
+    laboratorio_destino = models.CharField(
+        max_length=50
+    )
     data_abertura = models.DateTimeField(auto_now_add = True)
-    data_fechamento = models.DateTimeField()
+    data_fechamento = models.DateTimeField(
+        null = True,
+        blank = True
+    )
 
     def __str__(self):
         return self.status

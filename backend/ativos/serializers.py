@@ -74,18 +74,54 @@ class AtivoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 # Movimentacao Serializer
+
+# Movimentacao Serializer
 class MovimentacaoSerializer(serializers.ModelSerializer):
+
+    usuario_detalhes = UsuarioSerializer(
+        source="usuario",
+        read_only=True
+    )
+
+    ativo_detalhes = AtivoSerializer(
+        source="ativo",
+        read_only=True
+    )
+
+    origem_detalhes = LaboratorioSerializer(
+        source="origem",
+        read_only=True
+    )
+
+    destino_detalhes = LaboratorioSerializer(
+        source="destino",
+        read_only=True
+    )
+
     class Meta:
         model = Movimentacao
         fields = "__all__"
 
 # OrdemServico Serializer
 class OrdemServicoSerializer(serializers.ModelSerializer):
+    ativo_detalhes = AtivoSerializer(source="ativo", read_only=True)
+
     class Meta:
         model = OrdemServico
         fields = [
+            "id",
             "ativo",
+            "ativo_detalhes",
             "usuario",
             "descricao",
-            "status"
+            "status",
+            "laboratorio_origem",
+            "laboratorio_destino",
+            "data_abertura",
+            "data_fechamento"
+        ]
+        read_only_fields = [
+            "id",
+            "ativo_detalhes",
+            "data_abertura"
         ]
