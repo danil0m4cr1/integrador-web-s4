@@ -13,13 +13,13 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import (
-    User as UsuarioModel,
     Categoria,
     Laboratorio,
     Ativo,
     Movimentacao,
     OrdemServico
 )
+from django.contrib.auth.models import User
 
 from .serializers import (
     CadastroUsuarioSerializers,
@@ -88,6 +88,7 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
     permission_classes = [SomenteAdminParaAlteracoes]
 
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_usuario(request):
@@ -101,7 +102,6 @@ def login_usuario(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Localiza o usuário pelo e-mail
     usuario_cadastrado = User.objects.filter(
         email__iexact=email
     ).first()
@@ -112,7 +112,6 @@ def login_usuario(request):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    # Autentica utilizando o username real do Django
     usuario = authenticate(
         request,
         username=usuario_cadastrado.username,
