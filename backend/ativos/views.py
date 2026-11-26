@@ -87,6 +87,7 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
 
     permission_classes = [SomenteAdminParaAlteracoes]
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_usuario(request):
@@ -100,9 +101,21 @@ def login_usuario(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    # Localiza o usuário pelo e-mail
+    usuario_cadastrado = User.objects.filter(
+        email__iexact=email
+    ).first()
+
+    if usuario_cadastrado is None:
+        return Response(
+            {'detail': 'E-mail ou senha inválidos.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    # Autentica utilizando o username real do Django
     usuario = authenticate(
         request,
-        username=email,
+        username=usuario_cadastrado.username,
         password=password
     )
 
@@ -110,6 +123,12 @@ def login_usuario(request):
         return Response(
             {'detail': 'E-mail ou senha inválidos.'},
             status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    if not usuario.is_active:
+        return Response(
+            {'detail': 'Usuário inativo.'},
+            status=status.HTTP_403_FORBIDDEN
         )
 
     refresh = RefreshToken.for_user(usuario)
