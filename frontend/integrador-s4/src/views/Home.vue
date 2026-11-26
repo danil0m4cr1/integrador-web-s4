@@ -12,7 +12,7 @@
                        rounded-2xl text-2xl font-bold
                        text-black hover:bg-[#E5F8EC]/30
                        transition duration-200 cursor-pointer"
-                @click="$router.push('history')"
+                @click="$router.push('historico')"
             >
                 ÚLTIMAS MOVIMENTAÇÕES
             </button>
@@ -26,17 +26,6 @@
                 @click="$router.push('dashboard')"
             >
                 DASHBOARD
-            </button>
-
-            <button
-                class="w-full max-w-[520px] h-28
-                       border-2 border-[#8fcf8f]
-                       rounded-2xl text-2xl font-bold
-                       text-black hover:bg-[#E5F8EC]/30
-                       transition duration-200 cursor-pointer"
-                @click="$router.push('ra')"
-            >
-                RA
             </button>
 
         </main>
