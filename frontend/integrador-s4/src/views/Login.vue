@@ -65,8 +65,8 @@ async function login() {
     });
 
     // Redireciona após a confirmação do backend.
-    localStorage.setItem("usuario_id", response.data.id);
-    localStorage.setItem("usuario_email", response.data.email);
+    localStorage.setItem('access', response.data.access)
+    localStorage.setItem('refresh', response.data.refresh)
     await router.push('/home');
     
 

@@ -1,18 +1,10 @@
 
-from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework.permissions import BasePermission
 
 
-class SomenteAdminParaAlteracoes(BasePermission):
-
+class SomenteUsuarioAutenticado(BasePermission):
     def has_permission(self, request, view):
-
-        # Consultas liberadas para todos
-        if request.method in SAFE_METHODS:
-            return True
-
-        # Alterações permitidas somente para administradores
-        return (
+        return bool(
             request.user
             and request.user.is_authenticated
-            and request.user.is_staff
         )

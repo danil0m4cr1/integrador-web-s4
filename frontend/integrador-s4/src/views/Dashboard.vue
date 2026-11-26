@@ -252,7 +252,7 @@ export default {
 
             error: null,
 
-            apiUrl: 'http://localhost:8080/api/ativo/'
+            apiUrl: `${import.meta.env.VITE_API_URL}/api/ativo`
 
         }
     },

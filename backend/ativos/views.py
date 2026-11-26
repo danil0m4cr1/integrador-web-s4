@@ -9,9 +9,11 @@ from rest_framework.response import Response
 
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.db import transaction
+
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from django.contrib.auth.models import User
 from .models import (
     Categoria,
     Laboratorio,
@@ -19,7 +21,6 @@ from .models import (
     Movimentacao,
     OrdemServico
 )
-from django.contrib.auth.models import User
 
 from .serializers import (
     CadastroUsuarioSerializers,
@@ -31,61 +32,87 @@ from .serializers import (
     OrdemServicoSerializer
 )
 
-from .permissions import SomenteAdminParaAlteracoes
+from .permissions import SomenteUsuarioAutenticado
+
 
 def home(request):
     return HttpResponse("Django Teste - Projeto Integrador")
 
-class CadastroUsuarioViewSet(generics.CreateAPIView):
-
-    queryset = User.objects.all()
-    serializer_class = CadastroUsuarioSerializers
-
-    permission_classes = [AllowAny]
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
-
     queryset = User.objects.all().order_by("-id")
     serializer_class = UsuarioSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    
-    permission_classes = [SomenteAdminParaAlteracoes]
 
 class CategoriaViewSet(viewsets.ModelViewSet):
-
     queryset = Categoria.objects.all().order_by("-id")
     serializer_class = CategoriaSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    permission_classes = [SomenteAdminParaAlteracoes]
 
 class LaboratorioViewSet(viewsets.ModelViewSet):
-
     queryset = Laboratorio.objects.all().order_by("-id")
     serializer_class = LaboratorioSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    permission_classes = [SomenteAdminParaAlteracoes]
 
 class AtivoViewSet(viewsets.ModelViewSet):
-
     queryset = Ativo.objects.all().order_by("-id")
     serializer_class = AtivoSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    permission_classes = [SomenteAdminParaAlteracoes]
 
 class MovimentacaoViewSet(viewsets.ModelViewSet):
-
     queryset = Movimentacao.objects.all().order_by("-id")
     serializer_class = MovimentacaoSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    permission_classes = [SomenteAdminParaAlteracoes]
 
 class OrdemServicoViewSet(viewsets.ModelViewSet):
-
     queryset = OrdemServico.objects.all().order_by("-id")
     serializer_class = OrdemServicoSerializer
+    permission_classes = [SomenteUsuarioAutenticado]
 
-    permission_classes = [SomenteAdminParaAlteracoes]
+    def atualizar_ativo(self, ordem):
+        """
+        Se a ordem de serviço estiver concluída,
+        altera automaticamente o ativo relacionado
+        para DISPONIVEL.
+        """
 
+        if ordem.status == "CONCLUIDO" and ordem.ativo:
+            ordem.ativo.status = "DISPONIVEL"
+
+            ordem.ativo.save(
+                update_fields=["status"]
+            )
+
+    def perform_create(self, serializer):
+        """
+        Executado ao criar uma ordem de serviço.
+        """
+
+        with transaction.atomic():
+            ordem = serializer.save()
+
+            self.atualizar_ativo(ordem)
+
+    def perform_update(self, serializer):
+        """
+        Executado ao atualizar uma ordem de serviço.
+        """
+
+        with transaction.atomic():
+            ordem = serializer.save()
+
+            self.atualizar_ativo(ordem)
+
+
+class CadastroUsuarioViewSet(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = CadastroUsuarioSerializers
+    permission_classes = [AllowAny]
 
 
 @api_view(['POST'])
