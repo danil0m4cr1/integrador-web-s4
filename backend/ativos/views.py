@@ -1,63 +1,96 @@
-from django.contrib.auth.models import User
-from rest_framework import viewsets, generics
+
+from rest_framework import viewsets, generics, status
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import (
+    api_view,
+    permission_classes
+)
+from rest_framework.response import Response
+
+from django.http import HttpResponse
+from django.contrib.auth import authenticate
+
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import (
-    User,
-    Categoria, 
-    Laboratorio, 
-    Ativo, 
-    Movimentacao, 
+    User as UsuarioModel,
+    Categoria,
+    Laboratorio,
+    Ativo,
+    Movimentacao,
     OrdemServico
 )
+
 from .serializers import (
     CadastroUsuarioSerializers,
     UsuarioSerializer,
-    CategoriaSerializer, 
-    LaboratorioSerializer, 
-    AtivoSerializer, 
-    MovimentacaoSerializer, 
+    CategoriaSerializer,
+    LaboratorioSerializer,
+    AtivoSerializer,
+    MovimentacaoSerializer,
     OrdemServicoSerializer
 )
-from rest_framework.permissions import (AllowAny, IsAuthenticated, IsAdminUser)
-from django.http import HttpResponse
-from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+
+from .permissions import SomenteAdminParaAlteracoes
+
 
 def home(request):
     return HttpResponse("Django Teste - Projeto Integrador")
 
 class CadastroUsuarioViewSet(generics.CreateAPIView):
-    queryset = User.objects.all()
+
+    queryset = UsuarioModel.objects.all()
     serializer_class = CadastroUsuarioSerializers
+
     permission_classes = [AllowAny]
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all().order_by("-id")
+
+    queryset = UsuarioModel.objects.all().order_by("-id")
     serializer_class = UsuarioSerializer
 
+    
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 class CategoriaViewSet(viewsets.ModelViewSet):
+
     queryset = Categoria.objects.all().order_by("-id")
     serializer_class = CategoriaSerializer
 
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 class LaboratorioViewSet(viewsets.ModelViewSet):
+
     queryset = Laboratorio.objects.all().order_by("-id")
     serializer_class = LaboratorioSerializer
 
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 class AtivoViewSet(viewsets.ModelViewSet):
+
     queryset = Ativo.objects.all().order_by("-id")
     serializer_class = AtivoSerializer
 
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 class MovimentacaoViewSet(viewsets.ModelViewSet):
+
     queryset = Movimentacao.objects.all().order_by("-id")
     serializer_class = MovimentacaoSerializer
 
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 class OrdemServicoViewSet(viewsets.ModelViewSet):
+
     queryset = OrdemServico.objects.all().order_by("-id")
     serializer_class = OrdemServicoSerializer
 
+    permission_classes = [SomenteAdminParaAlteracoes]
+
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login_usuario(request):
+
     email = request.data.get('email', '').strip().lower()
     password = request.data.get('password', '')
 
@@ -79,8 +112,13 @@ def login_usuario(request):
             status=status.HTTP_401_UNAUTHORIZED
         )
 
+    refresh = RefreshToken.for_user(usuario)
+
     return Response({
         'id': usuario.id,
         'email': usuario.email,
+        'is_staff': usuario.is_staff,
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
         'detail': 'Login realizado com sucesso.'
     }, status=status.HTTP_200_OK)

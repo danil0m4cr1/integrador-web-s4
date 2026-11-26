@@ -34,6 +34,16 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app']
 CSRF_TRUSTED_ORIGINS = [
     "https://*.up.railway.app"
 ]
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+
 # Application definition
 
 INSTALLED_APPS = [
