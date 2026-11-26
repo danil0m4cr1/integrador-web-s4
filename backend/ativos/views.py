@@ -9,9 +9,9 @@ from rest_framework.response import Response
 
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
-
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.contrib.auth.models import User
 from .models import (
     Categoria,
     Laboratorio,
@@ -33,20 +33,19 @@ from .serializers import (
 
 from .permissions import SomenteAdminParaAlteracoes
 
-
 def home(request):
     return HttpResponse("Django Teste - Projeto Integrador")
 
 class CadastroUsuarioViewSet(generics.CreateAPIView):
 
-    queryset = UsuarioModel.objects.all()
+    queryset = User.objects.all()
     serializer_class = CadastroUsuarioSerializers
 
     permission_classes = [AllowAny]
 
 class UsuarioViewSet(viewsets.ReadOnlyModelViewSet):
 
-    queryset = UsuarioModel.objects.all().order_by("-id")
+    queryset = User.objects.all().order_by("-id")
     serializer_class = UsuarioSerializer
 
     
