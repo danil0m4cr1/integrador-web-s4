@@ -75,11 +75,6 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
     permission_classes = [SomenteUsuarioAutenticado]
 
     def atualizar_ativo(self, ordem):
-        """
-        Se a ordem de serviço estiver concluída,
-        altera automaticamente o ativo relacionado
-        para DISPONIVEL.
-        """
 
         if ordem.status == "CONCLUIDO" and ordem.ativo:
             ordem.ativo.status = "DISPONIVEL"
@@ -89,9 +84,6 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
             )
 
     def perform_create(self, serializer):
-        """
-        Executado ao criar uma ordem de serviço.
-        """
 
         with transaction.atomic():
             ordem = serializer.save()
@@ -99,10 +91,7 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
             self.atualizar_ativo(ordem)
 
     def perform_update(self, serializer):
-        """
-        Executado ao atualizar uma ordem de serviço.
-        """
-
+ 
         with transaction.atomic():
             ordem = serializer.save()
 
@@ -161,7 +150,6 @@ def login_usuario(request):
     return Response({
         'id': usuario.id,
         'email': usuario.email,
-        'is_staff': usuario.is_staff,
         'access': str(refresh.access_token),
         'refresh': str(refresh),
         'detail': 'Login realizado com sucesso.'
