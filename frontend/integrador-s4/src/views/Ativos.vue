@@ -32,7 +32,6 @@
 
                 <!-- Filtros de status -->
                 <div>
-
                     <div class="flex flex-wrap gap-3">
 
                         <button
@@ -150,6 +149,10 @@
                                     Categoria
                                 </th>
 
+                                <th class="px-6 py-4 font-semibold">
+                                    Laboratório
+                                </th>
+
                             </tr>
                         </thead>
 
@@ -157,7 +160,7 @@
 
                             <!-- Carregamento -->
                             <tr v-if="loading">
-                                <td colspan="5"
+                                <td colspan="6"
                                     class="text-center py-10 text-gray-400">
                                     Carregando ativos...
                                 </td>
@@ -165,7 +168,7 @@
 
                             <!-- Erro -->
                             <tr v-else-if="error">
-                                <td colspan="5"
+                                <td colspan="6"
                                     class="text-center py-10 text-red-500">
                                     {{ error }}
                                 </td>
@@ -177,7 +180,14 @@
                                 <tr
                                     v-for="item in filteredAssets"
                                     :key="item.id"
-                                    class="border-t border-gray-100 hover:bg-gray-50 transition"
+                                    @click="openAsset(item)"
+                                    @keydown.enter="openAsset(item)"
+                                    tabindex="0"
+                                    role="link"
+                                    :aria-label="`Ver detalhes do ativo ${item.nome}`"
+                                    class="border-t border-gray-100 hover:bg-[#E5F8EC]
+                                           transition cursor-pointer
+                                           focus:outline-none focus:bg-[#E5F8EC]"
                                 >
 
                                     <!-- Patrimônio -->
@@ -200,13 +210,19 @@
 
                                         <select
                                             :value="item.status"
+                                            @click.stop
+                                            @keydown.stop
                                             @change="updateStatus(item, $event.target.value)"
                                             :disabled="updatingIds.includes(item.id)"
-                                            :class="statusClass(item.status)"
                                             class="px-3 py-2 rounded-lg text-xs font-semibold
-                                                   border border-transparent outline-none
-                                                   cursor-pointer disabled:opacity-50
-                                                   disabled:cursor-wait transition"
+                                                   border border-gray-200 outline-none
+                                                   cursor-pointer
+                                                   bg-gray-100 text-gray-700
+                                                   hover:bg-[#E5F8EC]
+                                                   hover:border-[#8fcf8f]
+                                                   transition duration-200
+                                                   disabled:opacity-50
+                                                   disabled:cursor-wait"
                                         >
                                             <option value="INDISPONIVEL">
                                                 Indisponível
@@ -235,11 +251,16 @@
                                         {{ item.categoriaNome }}
                                     </td>
 
+                                    <!-- Laboratório -->
+                                    <td class="px-6 py-5 text-gray-600 whitespace-nowrap">
+                                        {{ item.laboratorioNome }}
+                                    </td>
+
                                 </tr>
 
                                 <!-- Nenhum registro -->
                                 <tr v-if="filteredAssets.length === 0">
-                                    <td colspan="5"
+                                    <td colspan="6"
                                         class="text-center py-10 text-gray-400">
                                         Nenhum ativo encontrado.
                                     </td>
@@ -302,7 +323,8 @@ export default {
                     String(item.patrimonio || "").toLowerCase().includes(term) ||
                     String(item.nome || "").toLowerCase().includes(term) ||
                     String(item.descricao || "").toLowerCase().includes(term) ||
-                    String(item.categoriaNome || "").toLowerCase().includes(term);
+                    String(item.categoriaNome || "").toLowerCase().includes(term) ||
+                    String(item.laboratorioNome || "").toLowerCase().includes(term);
 
                 // Filtro de status
                 const matchesStatus =
@@ -315,6 +337,16 @@ export default {
     },
 
     methods: {
+
+        // Abrir detalhes do ativo
+        openAsset(item) {
+            this.$router.push({
+                name: "AtivoDetalhes",
+                params: {
+                    id: item.id
+                }
+            });
+        },
 
         // Buscar ativos na API
         async fetchAssets() {
@@ -334,6 +366,7 @@ export default {
 
                 this.assets = records.map(item => {
 
+                    // Categoria
                     const categoria = item.categoria_detalhes ?? item.categoria;
 
                     let categoriaNome = "-";
@@ -349,18 +382,32 @@ export default {
                         categoriaNome = `Categoria #${categoria}`;
                     }
 
+                    // Laboratório
+                    const laboratorio = item.laboratorio_detalhes ?? item.laboratorio;
+
+                    let laboratorioNome = "-";
+
+                    if (laboratorio && typeof laboratorio === "object") {
+                        laboratorioNome =
+                            laboratorio.nome ||
+                            laboratorio.name ||
+                            laboratorio.titulo ||
+                            "-";
+                    } else if (laboratorio !== null && laboratorio !== undefined) {
+                        laboratorioNome = `Laboratório #${laboratorio}`;
+                    }
+
                     return {
                         id: item.id,
                         patrimonio: item.patrimonio || "-",
                         nome: item.nome || "-",
                         descricao: item.descricao || "-",
                         status: item.status,
-                        categoriaNome
+                        categoriaNome,
+                        laboratorioNome
                     };
 
                 });
-
-                console.log("Ativos recebidos:", this.assets);
 
             } catch (error) {
 
@@ -399,10 +446,6 @@ export default {
 
                 // Atualiza a interface somente após a confirmação da API
                 item.status = newStatus;
-
-                console.log(
-                    `Status do ativo ${item.patrimonio} atualizado para ${newStatus}`
-                );
 
             } catch (error) {
 

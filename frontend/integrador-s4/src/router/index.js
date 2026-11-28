@@ -8,6 +8,7 @@ import Dashboard from '../views/Dashboard.vue';
 import HistoryActive from '../views/HistoryActive.vue';
 import OrdemServico from '../views/OrdemServico.vue';
 import Ativos from '../views/Ativos.vue';
+import AtivoDetalhes from '../views/AtivoDetalhes.vue';
 
 // Verifica se o JWT existe e ainda não expirou
 function tokenValido(token) {
@@ -65,6 +66,12 @@ const routes = [
     {
         path: '/ativos',
         component: Ativos,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/ativos/:id',
+        name: 'AtivoDetalhes',
+        component: AtivoDetalhes,
         meta: { requiresAuth: true }
     },
     {

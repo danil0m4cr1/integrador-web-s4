@@ -3,7 +3,7 @@
 
         <Navbar />
 
-        <main class="px-6 py-10 md:px-12">
+        <main class="px-6 py-5 md:px-12">
 
             <!-- Cabeçalho -->
             <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -333,13 +333,27 @@ export default {
 
         // Consulta os ativos na API Django
         async carregarAtivos() {
-
             this.loading = true
             this.error = null
 
             try {
+                const token = localStorage.getItem('access')
 
-                const response = await fetch(this.apiUrl)
+                if (!token) {
+                    throw new Error('Sessão não encontrada. Faça login novamente.')
+                }
+
+                const response = await fetch(this.apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+
+                if (response.status === 401) {
+                    throw new Error('Sessão expirada. Faça login novamente.')
+                }
 
                 if (!response.ok) {
                     throw new Error(`Erro HTTP: ${response.status}`)
@@ -347,42 +361,28 @@ export default {
 
                 const data = await response.json()
 
-                // Trata respostas em lista ou paginadas
                 const ativos = Array.isArray(data)
                     ? data
                     : data.results || data.data || []
 
-                // Organiza os dados recebidos
                 this.machines = ativos.map(ativo => ({
-
                     id: ativo.id,
-
                     name: ativo.nome,
-
                     patrimonio: ativo.patrimonio,
-
-                    status: String(ativo.status || '')
-                        .trim()
-                        .toUpperCase(),
-
+                    status: String(ativo.status || '').trim().toUpperCase(),
                     laboratorio: ativo.laboratorio,
-
                     categoria: ativo.categoria
-
                 }))
 
             } catch (error) {
-
                 console.error('Erro ao carregar ativos:', error)
 
-                this.error = 'Não foi possível carregar os ativos. Verifique a conexão com o servidor.'
+                this.error = error.message ||
+                    'Não foi possível carregar os ativos. Verifique a conexão com o servidor.'
 
             } finally {
-
                 this.loading = false
-
             }
-
         },
 
         // Calcula a porcentagem de cada situação

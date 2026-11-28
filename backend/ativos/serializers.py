@@ -104,7 +104,15 @@ class MovimentacaoSerializer(serializers.ModelSerializer):
 
 # OrdemServico Serializer
 class OrdemServicoSerializer(serializers.ModelSerializer):
-    ativo_detalhes = AtivoSerializer(source="ativo", read_only=True)
+    ativo_detalhes = AtivoSerializer(
+        source="ativo",
+        read_only=True
+    )
+
+    usuario_detalhes = UsuarioSerializer(
+        source="usuario",
+        read_only=True
+    )
 
     class Meta:
         model = OrdemServico
@@ -113,6 +121,7 @@ class OrdemServicoSerializer(serializers.ModelSerializer):
             "ativo",
             "ativo_detalhes",
             "usuario",
+            "usuario_detalhes",
             "descricao",
             "status",
             "laboratorio_origem",
@@ -120,8 +129,10 @@ class OrdemServicoSerializer(serializers.ModelSerializer):
             "data_abertura",
             "data_fechamento"
         ]
+
         read_only_fields = [
             "id",
-            "ativo_detalhes",
+            "usuario",
+            "usuario_detalhes",
             "data_abertura"
         ]

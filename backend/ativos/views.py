@@ -74,28 +74,13 @@ class OrdemServicoViewSet(viewsets.ModelViewSet):
     serializer_class = OrdemServicoSerializer
     permission_classes = [SomenteUsuarioAutenticado]
 
-    def atualizar_ativo(self, ordem):
-
-        if ordem.status == "CONCLUIDO" and ordem.ativo:
-            ordem.ativo.status = "DISPONIVEL"
-
-            ordem.ativo.save(
-                update_fields=["status"]
-            )
-
     def perform_create(self, serializer):
-
         with transaction.atomic():
-            ordem = serializer.save()
-
-            self.atualizar_ativo(ordem)
+            serializer.save(usuario=self.request.user)
 
     def perform_update(self, serializer):
- 
         with transaction.atomic():
-            ordem = serializer.save()
-
-            self.atualizar_ativo(ordem)
+            serializer.save()
 
 
 class CadastroUsuarioViewSet(generics.CreateAPIView):
