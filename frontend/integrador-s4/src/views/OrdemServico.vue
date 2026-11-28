@@ -3,30 +3,32 @@
     <Navbar />
 
     <main class="min-h-[calc(100dvh-80px)] bg-gray-50 px-4 pt-3 pb-4 sm:px-5 md:px-8 lg:px-12">
-        <section class="mx-auto mb-4 mt-3 grid max-w-7xl grid-cols-1 items-center gap-4 lg:grid-cols-[1fr_auto_1fr]">
-            <h1 class="text-center text-2xl font-bold text-gray-800 md:col-start-2 md:text-3xl">
+        <section class="mx-auto mb-4 mt-3 grid max-w-7xl grid-cols-1 items-center gap-4 min-[1025px]:grid-cols-[1fr_auto_1fr]">
+            <h1 class="text-center text-2xl font-bold text-gray-800 md:text-3xl min-[1025px]:col-start-2">
                 Ordens de Serviço
             </h1>
 
-            <div class="flex w-full items-center justify-end gap-2 lg:col-start-3">
-                <button
-                    @click="abrirFormulario"
-                    title="Adicionar ordem"
-                    aria-label="Adicionar ordem"
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-green-600 text-2xl font-semibold text-white cursor-pointer shadow-sm transition hover:bg-green-700"
-                >
-                    +
-                </button>
+            <div class="flex w-full flex-col items-center justify-center gap-3 min-[1025px]:col-start-3 min-[1025px]:flex-row min-[1025px]:justify-end">
+                <div class="flex items-center justify-center gap-2">
+                    <button
+                        @click="abrirFormulario"
+                        title="Adicionar ordem"
+                        aria-label="Adicionar ordem"
+                        class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl bg-green-600 text-2xl font-semibold text-white shadow-sm transition hover:bg-green-700"
+                    >
+                        +
+                    </button>
 
-                <button
-                    @click="removerOrdem"
-                    :disabled="!ordensFiltradas.length"
-                    title="Remover ordem"
-                    aria-label="Remover ordem"
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600 text-2xl font-semibold text-white cursor-pointer shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                    −
-                </button>
+                    <button
+                        @click="removerOrdem"
+                        :disabled="!ordensFiltradas.length"
+                        title="Remover ordem"
+                        aria-label="Remover ordem"
+                        class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl bg-red-600 text-2xl font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                        −
+                    </button>
+                </div>
 
                 <div class="rounded-xl border border-gray-200 bg-white px-4 py-2 shadow-sm">
                     <p class="text-center text-xs text-gray-500">Exibidas</p>
@@ -41,13 +43,13 @@
             <!-- FILTROS -->
             <div
                 v-if="!loading && !error && ordens.length"
-                class="mb-5 flex flex-wrap justify-center gap-2"
+                class="mb-5 flex flex-col items-center justify-center gap-2 min-[1025px]:flex-row min-[1025px]:flex-wrap"
             >
                 <button
                     v-for="filtro in filtrosStatus"
                     :key="filtro.valor"
                     @click="alterarFiltro(filtro.valor)"
-                    class="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 cursor-pointer transition hover:border-green-300 hover:bg-green-50"
+                    class="w-full max-w-xs cursor-pointer rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-green-300 hover:bg-green-50 min-[1025px]:w-auto"
                 >
                     {{ filtro.nome }}
 
@@ -71,7 +73,7 @@
                 class="rounded-xl border border-red-200 bg-red-50 p-5 text-center text-sm text-red-700"
             >
                 {{ error }}
-                <button @click="buscarOrdens" class="ml-2 font-semibold underline">
+                <button @click="buscarOrdens" class="ml-2 cursor-pointer font-semibold underline">
                     Tentar novamente
                 </button>
             </div>
@@ -95,24 +97,25 @@
 
                 <button
                     @click="alterarFiltro('TODAS')"
-                    class="mt-4 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
+                    class="mt-4 cursor-pointer rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
                 >
                     Mostrar todas
                 </button>
             </div>
 
-            <!-- CARROSSEL -->
+            <!-- CARROSSEL DESKTOP / LISTA MOBILE -->
             <div
                 v-else
                 class="mx-auto flex w-full max-w-6xl items-center gap-2 sm:gap-3"
                 :class="{ 'carrossel-unico': ordensFiltradas.length === 1 }"
             >
+                <!-- SETA ANTERIOR: SOMENTE DESKTOP -->
                 <button
-                    v-if="ordensFiltradas.length > 1"
+                    v-if="ordensFiltradas.length > 1 && !isMobile"
                     @click="navegar(-1)"
                     :disabled="activeIndex === 0"
                     aria-label="Ordem anterior"
-                    class="z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-2xl text-gray-700 shadow-md transition hover:border-green-400 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-30"
+                    class="z-10 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-2xl text-gray-700 shadow-md transition hover:border-green-400 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-30"
                 >
                     ‹
                 </button>
@@ -120,18 +123,22 @@
                 <div
                     ref="carousel"
                     class="carousel-container flex min-w-0 flex-1 items-stretch gap-3 py-4"
-                    :class="{ 'carousel-container-single': ordensFiltradas.length === 1 }"
+                    :class="{
+                        'carousel-container-single': ordensFiltradas.length === 1 && !isMobile,
+                        'carousel-container-mobile': isMobile
+                    }"
                     @scroll.passive="atualizarCardAtivo"
                 >
                     <article
                         v-for="(ordem, index) in ordensFiltradas"
                         :key="ordem.id"
-                        @click="irPara(index)"
+                        @click="!isMobile && irPara(index)"
                         class="carousel-card shrink-0 cursor-pointer rounded-xl border border-gray-200 bg-white p-3 sm:p-4"
                         :class="{
-                            'carousel-card-active': index === activeIndex,
-                            'carousel-card-inactive': index !== activeIndex,
-                            'carousel-card-single': ordensFiltradas.length === 1
+                            'carousel-card-active': index === activeIndex && !isMobile,
+                            'carousel-card-inactive': index !== activeIndex && !isMobile,
+                            'carousel-card-single': ordensFiltradas.length === 1 && !isMobile,
+                            'carousel-card-mobile': isMobile
                         }"
                     >
                         <!-- IDENTIFICAÇÃO -->
@@ -225,7 +232,7 @@
                                 :value="ordem.status"
                                 :disabled="atualizando === ordem.id"
                                 @change="atualizarStatus(ordem, $event.target.value)"
-                                class="w-full appearance-none rounded-lg cursor-pointer border border-gray-200 bg-white px-2 py-2 text-xs text-gray-700 outline-none transition focus:border-green-400 focus:ring-2 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="w-full cursor-pointer appearance-none rounded-lg border border-gray-200 bg-white px-2 py-2 text-xs text-gray-700 outline-none transition focus:border-green-400 focus:ring-2 focus:ring-green-100 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option value="PENDENTE">Pendente</option>
                                 <option value="CONCLUIDO">Concluído</option>
@@ -239,20 +246,21 @@
                     </article>
                 </div>
 
+                <!-- SETA PRÓXIMA: SOMENTE DESKTOP -->
                 <button
-                    v-if="ordensFiltradas.length > 1"
+                    v-if="ordensFiltradas.length > 1 && !isMobile"
                     @click="navegar(1)"
                     :disabled="activeIndex === ordensFiltradas.length - 1"
                     aria-label="Próxima ordem"
-                    class="z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-2xl text-gray-700 shadow-md transition hover:border-green-400 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-30"
+                    class="z-10 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-2xl text-gray-700 shadow-md transition hover:border-green-400 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-30"
                 >
                     ›
                 </button>
             </div>
 
-            <!-- INDICADORES -->
+            <!-- INDICADORES: SOMENTE DESKTOP -->
             <div
-                v-if="ordensFiltradas.length > 1 && !loading && !error"
+                v-if="ordensFiltradas.length > 1 && !loading && !error && !isMobile"
                 class="mt-2 flex flex-wrap justify-center gap-2"
             >
                 <button
@@ -260,7 +268,7 @@
                     :key="ordem.id"
                     @click="irPara(index)"
                     :aria-label="'Ir para ordem ' + ordem.id"
-                    class="h-2 rounded-full transition-all duration-300"
+                    class="h-2 cursor-pointer rounded-full transition-all duration-300"
                     :class="activeIndex === index
                         ? 'w-8 bg-green-500'
                         : 'w-2 bg-gray-300 hover:bg-green-300'"
@@ -288,7 +296,7 @@
                         @click="fecharFormulario"
                         type="button"
                         aria-label="Fechar formulário"
-                        class="shrink-0 text-2xl text-gray-400 cursor-pointer transition hover:text-gray-700"
+                        class="shrink-0 cursor-pointer text-2xl text-gray-400 transition hover:text-gray-700"
                     >
                         &times;
                     </button>
@@ -389,7 +397,7 @@
                         <button
                             type="button"
                             @click="fecharFormulario"
-                            class="rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
+                            class="cursor-pointer rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
                         >
                             Cancelar
                         </button>
@@ -397,7 +405,7 @@
                         <button
                             type="submit"
                             :disabled="salvandoOrdem || !ativos.length || !laboratorios.length"
-                            class="rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            class="cursor-pointer rounded-lg bg-green-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {{ salvandoOrdem ? "Cadastrando..." : "Cadastrar ordem" }}
                         </button>
@@ -444,6 +452,8 @@ export default {
             mostrarFormulario: false,
 
             activeIndex: 0,
+            isMobile: window.innerWidth < 640,
+
             filtroStatus: "TODAS",
 
             filtrosStatus: [
@@ -471,8 +481,10 @@ export default {
     },
 
     mounted() {
+        this.atualizarLayout();
         this.buscarOrdens();
-        window.addEventListener("resize", this.recentralizarCard);
+
+        window.addEventListener("resize", this.atualizarLayout);
     },
 
     watch: {
@@ -505,7 +517,9 @@ export default {
 
     beforeUnmount() {
         this.restaurarScroll();
-        window.removeEventListener("resize", this.recentralizarCard);
+
+        window.removeEventListener("resize", this.atualizarLayout);
+
         clearTimeout(this.scrollTimer);
     },
 
@@ -518,17 +532,32 @@ export default {
             this.estilosBodyAnteriores = null;
         },
 
+        atualizarLayout() {
+            const mobile = window.innerWidth < 640;
+
+            if (this.isMobile !== mobile) {
+                this.isMobile = mobile;
+            }
+
+            if (!mobile && this.ordensFiltradas.length) {
+                this.$nextTick(() => {
+                    this.centralizarCard(this.activeIndex, false);
+                });
+            }
+        },
+
         async buscarOrdens() {
             this.loading = true;
             this.error = null;
 
             try {
                 const response = await api.get("ordem-servico/");
+
                 this.ordens = obterLista(response);
                 this.activeIndex = 0;
 
                 this.$nextTick(() => {
-                    if (this.ordensFiltradas.length) {
+                    if (this.ordensFiltradas.length && !this.isMobile) {
                         this.centralizarCard(0, false);
                     }
                 });
@@ -556,7 +585,7 @@ export default {
             this.activeIndex = 0;
 
             this.$nextTick(() => {
-                if (this.ordensFiltradas.length) {
+                if (this.ordensFiltradas.length && !this.isMobile) {
                     this.centralizarCard(0, false);
                 }
             });
@@ -564,7 +593,7 @@ export default {
 
         getAtivo(ordem) {
             return ordem.ativo_detalhes ||
-                (typeof ordem.ativo === "object" ? ordem.ativo : {}) ||
+                (ordem.ativo && typeof ordem.ativo === "object" ? ordem.ativo : {}) ||
                 {};
         },
 
@@ -645,6 +674,7 @@ export default {
                 this.activeIndex = 0;
 
                 await this.buscarOrdens();
+
                 alert("Ordem de serviço cadastrada com sucesso!");
             } catch (error) {
                 console.error("Erro ao cadastrar ordem:", error);
@@ -673,13 +703,14 @@ export default {
                 await api.delete(`ordem-servico/${ordem.id}/`);
 
                 this.ordens = this.ordens.filter(o => o.id !== ordem.id);
+
                 this.activeIndex = Math.min(
                     this.activeIndex,
                     Math.max(0, this.ordensFiltradas.length - 1)
                 );
 
                 this.$nextTick(() => {
-                    if (this.ordensFiltradas.length) {
+                    if (this.ordensFiltradas.length && !this.isMobile) {
                         this.centralizarCard(this.activeIndex, false);
                     }
                 });
@@ -714,7 +745,7 @@ export default {
                 );
 
                 this.$nextTick(() => {
-                    if (this.ordensFiltradas.length) {
+                    if (this.ordensFiltradas.length && !this.isMobile) {
                         this.centralizarCard(this.activeIndex, false);
                     }
                 });
@@ -762,10 +793,14 @@ export default {
         },
 
         irPara(index) {
-            this.centralizarCard(index);
+            if (!this.isMobile) {
+                this.centralizarCard(index);
+            }
         },
 
         centralizarCard(index, animar = true) {
+            if (this.isMobile) return;
+
             const carousel = this.$refs.carousel;
 
             if (!carousel || index < 0 || index >= this.ordensFiltradas.length) {
@@ -777,6 +812,7 @@ export default {
             this.$nextTick(() => {
                 requestAnimationFrame(() => {
                     const card = carousel.children[index];
+
                     if (!card) return;
 
                     if (this.ordensFiltradas.length === 1) {
@@ -805,8 +841,7 @@ export default {
         atualizarCardAtivo() {
             const carousel = this.$refs.carousel;
 
-            if (!carousel || this.ordensFiltradas.length <= 1) {
-                this.activeIndex = 0;
+            if (this.isMobile || !carousel || this.ordensFiltradas.length <= 1) {
                 return;
             }
 
@@ -828,12 +863,6 @@ export default {
                     }
                 });
             }, 100);
-        },
-
-        recentralizarCard() {
-            if (this.ordensFiltradas.length) {
-                this.centralizarCard(this.activeIndex, false);
-            }
         }
     }
 };
@@ -942,6 +971,42 @@ export default {
     margin-top: auto;
 }
 
+/* LISTA VERTICAL MOBILE */
+.carousel-container-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+
+    overflow: visible;
+
+    padding: 8px 0 16px;
+
+    scroll-snap-type: none;
+}
+
+.carousel-card-mobile {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    min-height: auto;
+
+    display: block;
+
+    padding: 16px;
+
+    transform: none;
+    transform-origin: center;
+
+    opacity: 1;
+
+    cursor: default;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
 /* TABLETS E DESKTOPS */
 @media (min-width: 640px) {
     .carousel-container {
@@ -973,29 +1038,28 @@ export default {
 /* CELULARES */
 @media (max-width: 639px) {
     .carousel-container {
-        padding-inline: 8%;
-    }
-
-    .carousel-card {
-        flex-basis: 84%;
-        width: 84%;
-        min-width: 84%;
-    }
-
-    .carousel-card-inactive {
-        transform: scale(0.82);
-    }
-
-    .carousel-container-single {
         padding-inline: 0;
     }
 
-    .carousel-card-single {
+    .carousel-card {
         flex-basis: 100%;
         width: 100%;
+        min-width: 0;
+    }
+
+    .carousel-container-mobile {
+        padding-inline: 0;
+    }
+
+    .carousel-card-mobile {
+        width: 100%;
+        min-width: 0;
         max-width: 100%;
-        min-height: 520px;
-        padding: 20px;
+        min-height: auto;
+        padding: 16px;
+
+        transform: none;
+        opacity: 1;
     }
 }
 </style>
