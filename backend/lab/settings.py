@@ -32,7 +32,8 @@ DEBUG = os.environ.get('DEBUG', "False").lower() == "true"
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.up.railway.app']
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.up.railway.app"
+    "https://*.up.railway.app",
+    "https://tracklog-integrador.vercel.app"
 ]
 
 REST_FRAMEWORK = {
@@ -71,7 +72,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://tracklog-integrador.vercel.app"
 ]
 
 ROOT_URLCONF = 'lab.urls'
